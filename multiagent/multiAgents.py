@@ -98,13 +98,6 @@ class ReflexAgent(Agent):
         if action == Directions.STOP:
             stop_penalty -= 50
 
-        print("successor game state:",successorGameState)
-        print("new position:", newPos)
-        print("new food:", newFood.asList())
-        print(type(newFood))
-        print("new ghost state:", newGhostStates)
-        print("new scared times:", newScaredTimes)
-
         ghost_poses = [ghost.configuration.pos for ghost in newGhostStates]
         ghost_score = 0
         for ghost_pos in ghost_poses:
