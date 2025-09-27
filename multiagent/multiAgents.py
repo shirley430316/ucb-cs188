@@ -80,8 +80,6 @@ class ReflexAgent(Agent):
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
-        self.visited.append(newPos)
-
         "*** YOUR CODE HERE ***"
         prevFood = currentGameState.getFood()
         if newPos in prevFood.asList():
