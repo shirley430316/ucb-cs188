@@ -21,7 +21,7 @@ import bayesNet as bn
 from bayesNet import normalize
 import hunters
 from util import manhattanDistance, raiseNotDefined
-from factorOperations import joinFactorsByVariableWithCallTracking, joinFactors
+from factorOperations import joinFactorsByVariableWithCallTracking, joinFactors, Factor
 from factorOperations import eliminateWithCallTracking
 
 ########### ########### ###########
@@ -202,8 +202,34 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
             eliminationOrder = sorted(list(eliminationVariables))
 
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
-        "*** END YOUR CODE HERE ***"
+        # print(queryVariables)
+
+        factors = bayesNet.getAllCPTsWithEvidence(evidenceDict)
+        # print(factors)
+
+        for elimVar in eliminationOrder:
+            joinList = []
+            new_factors = []
+            for factor in factors:
+                if elimVar in factor.unconditionedVariables() or elimVar in factor.conditionedVariables():
+                    joinList.append(factor)
+                else:
+                    new_factors.append(factor)
+                    # print(factor)
+            # print(joinList)
+            _, join_factor = joinFactorsByVariable(joinList, elimVar)
+            # print(join_factor)
+
+            if len(join_factor.unconditionedVariables()) > 1:
+                elim_factor = eliminate(join_factor, elimVar)
+            else:
+                elim_factor = None
+            if elim_factor is not None:
+                new_factors.append(elim_factor)
+            factors = new_factors
+        
+        final_factor = normalize(joinFactors(factors))
+        return final_factor
 
 
     return inferenceByVariableElimination
@@ -443,7 +469,14 @@ class InferenceModule:
         Return the probability P(noisyDistance | pacmanPosition, ghostPosition).
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        if ghostPosition == jailPosition:
+            if noisyDistance is None: return 1.0
+            else: return 0.0
+        else:
+            if noisyDistance is None: return 0.0
+            else: 
+                trueDistance = manhattanDistance(pacmanPosition, ghostPosition)
+                return busters.getObservationProbability(noisyDistance, trueDistance)
         "*** END YOUR CODE HERE ***"
 
     def setGhostPosition(self, gameState, ghostPosition, index):
